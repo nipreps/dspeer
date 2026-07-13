@@ -1,0 +1,189 @@
+{
+  "institution": "mtl",
+  "files": [
+    {
+      "file_name": "yellow_tripdata_2026-02.parquet",
+      "hash": "106c59bb36ce157dc4249f5713db982b217a5e514b0ac4e7be817d7cad2aa245",
+      "ticket": "blobaa5miqzqwtl5z3jggybqw2ndvtnoukvplgcwtbch3lfkwmjgc7it4aaaaaigywn3g3hbk7oeespvoe63tavsc6s6kffqvrhhx2ax27fnfkrek",
+      "stats": {
+        "num_rows": 3399866,
+        "num_row_groups": 4,
+        "file_size_bytes": 58683353,
+        "columns": [
+          {
+            "name": "VendorID",
+            "c_type": "INT32"
+          },
+          {
+            "name": "tpep_pickup_datetime",
+            "c_type": "INT64"
+          },
+          {
+            "name": "tpep_dropoff_datetime",
+            "c_type": "INT64"
+          },
+          {
+            "name": "passenger_count",
+            "c_type": "INT64"
+          },
+          {
+            "name": "trip_distance",
+            "c_type": "DOUBLE"
+          },
+          {
+            "name": "RatecodeID",
+            "c_type": "INT64"
+          },
+          {
+            "name": "store_and_fwd_flag",
+            "c_type": "BYTE_ARRAY"
+          },
+          {
+            "name": "PULocationID",
+            "c_type": "INT32"
+          },
+          {
+            "name": "DOLocationID",
+            "c_type": "INT32"
+          },
+          {
+            "name": "payment_type",
+            "c_type": "INT64"
+          },
+          {
+            "name": "fare_amount",
+            "c_type": "DOUBLE"
+          },
+          {
+            "name": "extra",
+            "c_type": "DOUBLE"
+          },
+          {
+            "name": "mta_tax",
+            "c_type": "DOUBLE"
+          },
+          {
+            "name": "tip_amount",
+            "c_type": "DOUBLE"
+          },
+          {
+            "name": "tolls_amount",
+            "c_type": "DOUBLE"
+          },
+          {
+            "name": "improvement_surcharge",
+            "c_type": "DOUBLE"
+          },
+          {
+            "name": "total_amount",
+            "c_type": "DOUBLE"
+          },
+          {
+            "name": "congestion_surcharge",
+            "c_type": "DOUBLE"
+          },
+          {
+            "name": "Airport_fee",
+            "c_type": "DOUBLE"
+          },
+          {
+            "name": "cbd_congestion_fee",
+            "c_type": "DOUBLE"
+          }
+        ]
+      }
+    },
+    {
+      "file_name": "yellow_tripdata_2026-01.parquet",
+      "hash": "aec0905b9748d9ec664e05c3cf5992a3fd6e8ae40a6878f05e7f269a919dbf45",
+      "ticket": "blobaa5miqzqwtl5z3jggybqw2ndvtnoukvplgcwtbch3lfkwmjgc7it4aaaacxmbec3s5ent3dgjyc4ht2zskr723uk4qfgq6hqlz7sngurtw7uk",
+      "stats": {
+        "num_rows": 3724889,
+        "num_row_groups": 4,
+        "file_size_bytes": 64165080,
+        "columns": [
+          {
+            "name": "VendorID",
+            "c_type": "INT32"
+          },
+          {
+            "name": "tpep_pickup_datetime",
+            "c_type": "INT64"
+          },
+          {
+            "name": "tpep_dropoff_datetime",
+            "c_type": "INT64"
+          },
+          {
+            "name": "passenger_count",
+            "c_type": "INT64"
+          },
+          {
+            "name": "trip_distance",
+            "c_type": "DOUBLE"
+          },
+          {
+            "name": "RatecodeID",
+            "c_type": "INT64"
+          },
+          {
+            "name": "store_and_fwd_flag",
+            "c_type": "BYTE_ARRAY"
+          },
+          {
+            "name": "PULocationID",
+            "c_type": "INT32"
+          },
+          {
+            "name": "DOLocationID",
+            "c_type": "INT32"
+          },
+          {
+            "name": "payment_type",
+            "c_type": "INT64"
+          },
+          {
+            "name": "fare_amount",
+            "c_type": "DOUBLE"
+          },
+          {
+            "name": "extra",
+            "c_type": "DOUBLE"
+          },
+          {
+            "name": "mta_tax",
+            "c_type": "DOUBLE"
+          },
+          {
+            "name": "tip_amount",
+            "c_type": "DOUBLE"
+          },
+          {
+            "name": "tolls_amount",
+            "c_type": "DOUBLE"
+          },
+          {
+            "name": "improvement_surcharge",
+            "c_type": "DOUBLE"
+          },
+          {
+            "name": "total_amount",
+            "c_type": "DOUBLE"
+          },
+          {
+            "name": "congestion_surcharge",
+            "c_type": "DOUBLE"
+          },
+          {
+            "name": "Airport_fee",
+            "c_type": "DOUBLE"
+          },
+          {
+            "name": "cbd_congestion_fee",
+            "c_type": "DOUBLE"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,11 +1,4 @@
-rust-mvp-iroh-network/rust-mvp/target/
-rust-mvp-iroh-network/rust-mvp/data/
-rust-mvp-iroh-network/rust-mvp/cache/
-rust-mvp-iroh-network/docker-testbed/target/
-rust-mvp-iroh-network/docker-testbed/data/
-rust-mvp-iroh-network/docker-testbed/cache/
 peer-dataset-federation/node/target/
-
 peer-dataset-federation/testbed/data/
 peer-dataset-federation/node/Cargo.lock
 peer-dataset-federation/client/.venv/
