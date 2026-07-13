@@ -876,6 +876,32 @@ This week has again been heavily focused on the overall architecture, with the i
 ## Weekly Summary 06/07 - 12/07
 
 **Abstract**
+- Finish the V1 for the project (code and infra part)
+- Validation on 2 peer from different continent
+- Small fix in the code
+
+**Next week**
+- Finish documentation (mardown in the repos)
+- Release the reposs
+
+---
+
+### 13/07/2026
+
+**Work done:**
+- Refactor the repos
+- Start evaluation documentation
+- Define last step before the github release
+
+**Decisions / Observations / Blockers:**
+
+**Next steps:**
+- Finish evaluation markdown
+- Create costum function example for taxi parquet, finish demo notebooks
+
+## Weekly Summary 13/07 - 19/07
+
+**Abstract**
 
 **Next week**
 
