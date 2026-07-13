@@ -20,7 +20,7 @@ def format_size(num_bytes: int) -> str:
         if size < 1024:
             return f"{size:.1f} {unit}"
         size /= 1024
-    return f"{size:1.f} TB"
+    return f"{size:.1f} TB"
 
 # Fetch on demand access to the distributed Parquet dataset
 class P2PDataset:
