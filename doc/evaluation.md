@@ -27,12 +27,30 @@ And you can see that retrieving and displaying the file took only 6.5 seconds (6
 
 
 ## 2. NAT traversal and relay fallback
-> References: [Gossip broadcast](https://docs.iroh.computer/connecting/gossip), [iroh-gossip crate](https://docs.rs/iroh-gossip/latest/iroh_gossip/), [NeighborUp, NeighborDown](https://docs.rs/iroh-gossip/latest/iroh_gossip/net/type.ProtoEvent.html), [protocole proto hyParView, PlumTree](https://docs.rs/iroh-gossip/latest/iroh_gossip/proto/index.html)
+> References: [Gossip broadcast](https://docs.iroh.computer/connecting/gossip), [iroh-gossip crate](https://docs.rs/iroh-gossip/latest/iroh_gossip/), [NeighborUp, NeighborDown](https://docs.rs/iroh-gossip/latest/iroh_gossip/net/type.ProtoEvent.html), [protocole proto hyParView, PlumTree](https://docs.rs/iroh-gossip/latest/iroh_gossip/proto/index.html), [iroh Relays](https://docs.iroh.computer/concepts/relays), [iroh Troubleshooting](https://docs.iroh.computer/troubleshooting)
 
-> References: [iroh blobs](https://docs.iroh.computer/protocols/blobs), [Blob store design](https://www.iroh.computer/blog/blob-store-design-challenges)
+The behavior is entirely delegated to iroh (`Endpoint::bind(presets::N0)`). No NAT/relay logic is written directly into this project. The procedure is as follows: During setup, each endpoint connects to its nearest relay ([home relay](https://docs.iroh.computer/concepts/relays)) and registers itself as reachable there, it is through this relay that two endpoints establish initial contact, before attempting a direct hole-punch in parallel. If the hole-punch fails (for example, due to overly restrictive NAT on both sides), traffic continues to pass through the relay in a way that is transparent to the application, no error is visible in the code, just higher latency.
+
+To see which route your peers are using, you can use [iroh-doctor](https://github.com/n0-computer/iroh-doctor). `iroh-doctor` is a diagnostic tool, it transfers data between the two machines and reports in real time whether the connetion is direct, relayed, or a combination of the two as the transfer progess
+
+
 ## 3. Behavior under realistic conditions
+> References: [iroh blobs](https://docs.iroh.computer/protocols/blobs), [Blob store design](https://www.iroh.computer/blog/blob-store-design-challenges), [blobs protocol](https://docs.iroh.computer/protocols/blobs)
 
+`iroh-gossip` separate two layers: a membership layer (HyParView) that maintains a partial view of the swarm and detects direct neighbors that appear or disapperar, and a broadcast layer (PlumTree) that propagates messages redundantly so that they reach peers even in the event of join, leave, or message loss. This is explicitly documented as the rationale behind the protocol: the broadcast layer accepts that each node has only a partial view of the network and uses probabilistic relaying, since peers can joine, leave, change addresses, or lose messages at any time.
+
+**Peers joining / leaving**     
+`bootstrap_peers_from_env()` allows a new peer to join via `BOOTSTRAP_PEERS`. A peer that exits (Ctrl+C / quit) simply calls `router.shutdown()`. One addition to this project would be the ability to check whether remote peers are actually online.
+
+**Partial availability**    
+Currently, manifest sharing is not automated. The manifest is updated only at startup, or via the manual `refresh` command. If a peers adds or remove a `.parquet` file from its `data/` folder at any point, the other peers won't know about it until that peer performs a `refresh`. An addition to this project would be the automatic detection of these changes so that the user no longer has to do it.
+
+**Variable bandwith**   
+The transfer of a Parquet file uses BLAKE3-verified streaming: the data is divided into chunks, and each chunk is verified on the fly during reception rather than afterward. This means that available bandwidth directly and linearly translates to transfer time (there is no separate verification phase that would be added after the download), but it also means that there is no automatic adaptation (no compression, no quality negotiation), the project simply operates at the available bandwidth and does not adapt to it.
 
 ## 4. Reliability
+> References: [iroh blobs](https://docs.iroh.computer/protocols/blobs), [blob store design](https://www.iroh.computer/blog/blob-store-design-challenges)
+**Partial transfer reinstatement**  
+This capability comes entirely from iroh-blobs, not from any logic written in this project.
 
 ## 5. Known limitations
