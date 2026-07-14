@@ -92,6 +92,46 @@ Err(e) => println!("Download error: {e}"),
 Here, the approach is different: a download or broadcast error should not cause a node that is otherwise serving other peers to shut down, only the affected operation fails.
 
 ### 5.4 HTTP boundary
+The bridge between `node.rs` and `api.rs` returns a `Result<String, String>`, not the original `n0_error`.
+```Rust
+Ok::<String, String>(filename)
+
+.map_err(|e| format!("Download error: {e}"))
+```
+Each step of the task converts its error to a String using `.map_err(|e| format!(...)`. This `String` is then returned to the HTTP client in the JSON body `{'error':"..."}`.
+
+### 5.5 Python: client.py and dataset.py
+Only one type of application exception
+```Python
+class P2PError(Exception):
+    # Raised when the Rust node returns an error or is unreachable
+    pass
+```
+As documented in [python_client_layer.md](python_client_layer.md), the caller (`P2PDataset`, or the user in a notebook) only needs to know that "the call of the node failed".
+
+**Two interception layers in `client.py`**  
+```Python
+try:
+    response = requests.get(url, timeout=self.timeout)
+except requests.exceptions.ConnectionError as e:
+    raise P2PError(f"Cannot reach the Rust node at {self.base_url}") from e
+except requests.exceptions.Timeout:
+    raise P2PError(f"Request timed out after {self.timeout}s: GET {url}")
+
+self.raise_for_status(response)
+```
+The `try/except` block catches transport errors (node not started, incorrect port, timeout). `raise_for_status(response)` which is called afterward, catches application errors.
+
+### 5.5 Logging: `logger.info` / `logger.warning`
+```Python
+logger = logging.getLogger(__name__)
+
+logger.info("cache hit: %s", file_name)
+
+logger.warning("'%s' not found in any peer manifest", file_name)
+```
+The convetion used here is: `logger.info` for normal events (cache hit, fetch in progress), `logger.warning` for minor issues (file not found, but the caller can continue), and exceptions (`P2PError`) for actual failures that must terminate the call.
+
 
 
 ## 6. Known limitations
