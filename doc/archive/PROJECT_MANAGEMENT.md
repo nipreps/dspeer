@@ -899,6 +899,19 @@ This week has again been heavily focused on the overall architecture, with the i
 - Finish evaluation markdown
 - Create costum function example for taxi parquet, finish demo notebooks
 
+---
+
+### 14/07/2026
+
+**Work done:**
+- Finish evaluation mardown
+
+**Decisions / Observations / Blockers:**
+
+**Next steps:**
+- Start / modify / finish system architectur mardown
+- Create costum function example for taxi parquet, finish demo notebooks
+
 ## Weekly Summary 13/07 - 19/07
 
 **Abstract**
