@@ -81,7 +81,17 @@ Without this `.std_context(...)`, a `std::io::Error` thrown by `?` would simply 
 ### 5.3 Two distinct error
 The code does not handle all errors the same way:
 
-**Fatal errors (before background tasks start)** use `?` and trace back to `main.rs`, if `INSTITUTION` is missing
+**Fatal errors (before background tasks start)** use `?` and trace back to `main.rs`, if `INSTITUTION` is missing, if `data/` is not readable, or if the endpoint cannot be bound, the entire process stops and a contextualized error message is displayed.
+
+**Recoverable errors (interactive loop, gossip task, fetch task)** intercepted locally, displayed using `println!`/`eprintln!`, without causing the node to crash.
+```Rust
+Err(e) => eprintln!("Gossip: error scanning data/: {e}")
+
+Err(e) => println!("Download error: {e}"),
+```
+Here, the approach is different: a download or broadcast error should not cause a node that is otherwise serving other peers to shut down, only the affected operation fails.
+
+### 5.4 HTTP boundary
 
 
 ## 6. Known limitations
