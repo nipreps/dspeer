@@ -49,8 +49,49 @@ Currently, manifest sharing is not automated. The manifest is updated only at st
 The transfer of a Parquet file uses BLAKE3-verified streaming: the data is divided into chunks, and each chunk is verified on the fly during reception rather than afterward. This means that available bandwidth directly and linearly translates to transfer time (there is no separate verification phase that would be added after the download), but it also means that there is no automatic adaptation (no compression, no quality negotiation), the project simply operates at the available bandwidth and does not adapt to it.
 
 ## 4. Reliability
-> References: [iroh blobs](https://docs.iroh.computer/protocols/blobs), [blob store design](https://www.iroh.computer/blog/blob-store-design-challenges)
-**Partial transfer reinstatement**  
-This capability comes entirely from iroh-blobs, not from any logic written in this project.
+> References: [iroh blobs](https://docs.iroh.computer/protocols/blobs), [blob store design](https://www.iroh.computer/blog/blob-store-design-challenges), [BLAKE3](https://www.ietf.org/archive/id/draft-aumasson-blake3-00.html), [iroh tags](https://www.iroh.computer/blog/a-richer-tags-api)
 
-## 5. Known limitations
+**Partial transfer reinstatement**  
+This capability comes entirely from iroh-blobs, not from any logic written in this project. The protocol is explicitly designed to allow transfers to be paused and resumed, using BLAKE3 content-based addressing: each blob is identified by its root hash, and the verified streaming mechanism (based on the BLAKE3 hash tree) allows each received portion to be validated independently. The current code simply calls `downloader.download(hash, peer_id)` once (in `node.rs` and in the `/fetch` handler in `api.rs`). A retry loop would be a possible addition to this project.
+
+**Cache behavior**  
+In iroh-blobs, a tag is a name associated with a blob that prevents the garbage collector from deleting it, without a tag, a blob will eventually be deleted. `build_local_manifest_files()` (in `node.rs`) calls `store.blobs().add_path(...)` which automatically creates a tag for each local file added to the store: it is this tag that ensures that local `.parquet` files are never collected as long as the process.
+
+## 5. Error handling
+> References: [n0-error](https://github.com/n0-computer/n0-error), [python logging getLogger](https://docs.python.org/3/library/logging.html#logging.getLogger)
+
+### 5.1 Overview
+The project has two layers with different error-handling mechanisms, consistent with their respective roles:
+| Layer | Mechanism | Role |
+|---|---|---|
+| Rust (`node.rs`, `api.rs`) | `n0_error::Result` + `.std_context(...)` | Provide a clear context for each error as it is escalated |
+| HTTP boundary (`api.rs`, `client.py`) | JSON `{"error": "..."}` +  HTTP codes | Convert the Rust error into a simple text message for the client |
+| Python (`clinet.py`, `dataset.py`) | `P2PError` + `logging` | A single type of application exception, logs for operational monitoring |
+
+### 5.2 `n0_error` and the error context
+```Rust
+use n0_error::{Result, StdResultExt};
+```
+The project use `n0_error`, a crate that provides an `anyhow` style `Result` type (a single "black box" error that can wrap any source), plus the ability to track the exact location in the code where the error occurred. `StdResultExt::std_context(...)` is the method used throughout `node.rs` to attach a human-readable message to an error.s
+```Rust
+let institution = env::var("INSTITUTION").std_context("INSTITUTION environment variable is required")?;
+```
+Without this `.std_context(...)`, a `std::io::Error` thrown by `?` would simply say "No such file or directory", without specifying which file, or why the program was trying to open it.
+
+### 5.3 Two distinct error
+The code does not handle all errors the same way:
+
+**Fatal errors (before background tasks start)** use `?` and trace back to `main.rs`, if `INSTITUTION` is missing
+
+
+## 6. Known limitations
+Here is a list of the limitations currently known for this project. Please not that these can all be resolved, they are not permanent limitations. This list my be related to point 7 on future impreovements. All of these tasks can be planned and carried out in the future. The goal of this project is to be as flexible as possible, so there are countless possibilities available to you, each component can be modified or removed as you wish. 
+- No automatic deletion of manifests for deleted peers (orphaned JSON files that remains in `data/peers_manifest`)
+- `Event::NeighborUp` / `Event::NeighborDown` received by the code but ignored (`Ok(_) => {}`), network join/leave events are neither processed nor logged.
+- Manual availability refresh only (`refresh`), no folder watcher or periodic rescan.
+- No application-level retry is performed above `downloader.download()` in the event of a failure (only one attempt is made, the error is simply propagated)
+- Disk cache (`cache/`) with no size limit, no integrity checks on read (only on download)
+
+## 7. Future improvement
+- Partial reads to reduce transfers for larger Parquet artifacts
+- Implement a local database (DuckDB), which is useful if we start needing to work with several thousant Parquet files
