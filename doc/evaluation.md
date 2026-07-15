@@ -1,6 +1,16 @@
 # Evaluation, robustness and real-world conditions
 This document outlines the various features and currently known limitations.
 
+## Table of Contents
+
+1. [Real-world test conducted](#1-real-world-test-conducted)
+2. [NAT traversal and relay fallback](#2-nat-traversal-and-relay-fallback)
+3. [Behavior under realistic conditions](#3-behavior-under-realistic-conditions)
+4. [Reliability](#4-reliability)
+5. [Error handling](#5-error-handling)
+6. [Known limitations](#6-known-limitations)
+7. [Future improvement](#7-future-improvement)
+
 ## 1. Real-world test conducted
 To start with, here is a test conducted between two peers, one in Canada Montréal and one in Switzerland Sion (Thanks to [Nathan Antonietti](https://github.com/NathanAnto) for his time)
 

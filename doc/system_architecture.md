@@ -5,11 +5,17 @@ For network behavior under real-world conditions (NAT traversal, relay fallback,
 
 ## Table of Contents
 
+1. [Global topology](#1-global-topology)
+2. [Rust node](#2-the-rust-node)
+3. [Python client](#3-the-python-client)
+4. [End-to-end data flow](#4-end-to-end-data-flow)
+5. [Where to look next](#5-where-to-look-next)
+
 ## 1. Global topology
 Each institution runs the same two processes side by side:
 - a **Rust node** (`node/`), which joins the iroh network, holds the institution's Parquet files, and exposes a local HTTP API
 - a **Python client** (`client/`), used from a notebook, which talks only to its own local node over HTTP and never touches iroh directly
-Nodes talk to each other over iroh (direct connections, NAT traversal, relay fallback, all delegated to iroh, see [evaluation.md](evaluation.md)). Python clients never talk to each other, from the researcher's point of view, the whole federation is reachable through their own local node.
+Nodes talk to each other over iroh (direct connections, NAT traversal, relay fallback, all delegated to iroh, see [evaluation.md 2](evaluation.md#2-nat-traversal-and-relay-fallback)). Python clients never talk to each other, from the researcher's point of view, the whole federation is reachable through their own local node.
 
 ## 2. The Rust node
 The node is a single Tokio process (`peer()` in `node.rs`) that does four things concurrently: serve blobs, propagate manifests, run an HTTP API, and accept interactive commands.
@@ -28,7 +34,7 @@ Four iroh objects are created once at startup and shared for the life of the pro
 - `MemStore:` in-memory BLAKE3 blob store. Acts as a receive buffer during downloads and as the source when serving local files.
 - `Downloader:` coordinates downloads and reuses existing QUIC connections across multiple files.
 
-NAT traversal, relay fallback, and transfer resumability are entirely handled by iroh and are not reimplemented here, see [evaluation.md](evaluation.md) for detailes on that behavior.
+NAT traversal, relay fallback, and transfer resumability are entirely handled by iroh and are not reimplemented here, see [evaluation.md 2-4](evaluation.md#2-nat-traversal-and-relay-fallback) for detailes on that behavior.
 
 ### 2.2 Local file scanning
 On startup (and on manual `refresh`), `build_local_manifest_files()` scans `data/*.parquet`:
@@ -57,7 +63,7 @@ This is the mechanism that lets every node learn what every other node has, with
 Used from `demo.ipynb`. Two small modules, each with one job.
 
 ### 3.1 `P2PClient` HTTP wrapper
-The **only** part of the Python side that knows the Rust node exists. Thin `requests` wrapper around `/health`, `/files`, `/fetch`: converts transport errors and non 200 responses into a single `P2PError`. See [evaluation.md](evaluation.md) for the error-handling convention.
+The **only** part of the Python side that knows the Rust node exists. Thin `requests` wrapper around `/health`, `/files`, `/fetch`: converts transport errors and non 200 responses into a single `P2PError`. See [evaluation.md 5.5](evaluation.md#55-logging-loggerinfo--loggerwarning) for the error-handling convention.
 
 ### 3.2 `P2PDataset` cache and dataset API
 Everything a researcher calls from the notebook. It never talks HTTP directly, it goes thourgh `P2PClient`.
@@ -85,9 +91,17 @@ Two flows exist for retrieving a remote file: the **CLI** path (typing `fetch <t
 1. `p2p.load("file.parquet")` -> `P2PDataset.get()`
 2. `P2PClient.fetch(ticket)` -> `POST /fetch` on the local node
 3. Axum hands the ticket to the fetch task via channel
-4. `downloader.download(hash, peer_id)`, iroh connects to the peer named in the ticket and streams the blob, verifying it chunk by chunk against the BLAKE3 hash
+4. `downloader.download(hash, peer_id)`, iroh connects to the peer named in the ticket and streams the blob, verifying it chunk by chunk against the BLAKE3 hash (see [evaluation.md 3](evaluation.md#3-behavior-under-realistic-conditions))
 5. `store.blobs().export(hash, cache/...)` write the verified blob to disk
 6. The path is returned through the `oneshot` channel -> HTTP response -> `pandas.read_parquet()`
 
-
 ## 5. Where to look next
+For behavior, see the corresponding section of [evaluation.md](evaluation.md):
+
+| Topic | Section |
+|---|---|
+| NAT traversal, relay fallback, `iroh-doctor` | [2](evaluation.md#2-nat-traversal-and-relay-fallback)|
+| Peers joining/leaving, partial availability, bandwith | [3](evaluation.md#3-behavior-under-realistic-conditions) |
+| Partial transfer, cache/tag behavior | [4](evaluation.md#4-reliability) |
+| Error handling convetions (Rust, HTTP, Python) | [5](evaluation.md#5-error-handling) |
+| Known limitations and future work | [6](evaluation.md#6-known-limitations) / [7](evaluation.md#7-future-improvement) |
