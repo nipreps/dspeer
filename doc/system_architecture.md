@@ -39,16 +39,55 @@ On startup (and on manual `refresh`), `build_local_manifest_files()` scans `data
 ### 2.3 Manifest propagation via gossip
 This is the mechanism that lets every node learn what every other node has, without a central registry.
 - **Topic**: every node derives the same `TopicId` from a fixed string (`manifest_topic_id()`), so all institutions running this software join the same topic automatically, no coordination needed beyond `BOOTSTRAP_PEERS`.
-    > You can change this `TopicId` to create your network
+    > You can change this `TopicId` when creating your network
 - **Manifest content:** `{ institution, files: [{ file_name, hash, ticket, stats }] }`, one entry per local Parquet file.
 - **On startup:** the node waits until it has joined at least one peer (if `BOOTSTRAP_PEERS` is set), then broadcasts its own manifest once.
 - **On receive:** any manifest received from the gossip topic is written to `data/peers_manifest/<institution>.json`, overwriting the previous file for that institution. This is what make `/files` able to answer from disk without any live network call.
 - **Manual refresh**: the `refresh` command in the onteractive loop re-scans `data/`, rewrites the local manifest file, and re-broadcasts, used when files are added/removed (there is no folder watcher yet)
 
 ### 2.4 HTTP API exposed to Python (Axum)
+`api.rs` exposes three endpoints on `localhost:8080`, using channels (`fetch_tx`/`oneshot`) to hand off work to the async running inside `node.rs`:
+| Endpoint | Method | Description |
+|---|---|---|
+| `/health` | GET | Node status and institution name |
+| `/files` | GET | Reads every `data/peers_manifest/*.json` (including the node's own) and returns them merged, this is federation's full catalog as seen by this node |
+| `/fetch` | POST | Takes a `ticket`, forwards it to the node's fetch task, waits for the iroh download + export to `cache/` to finish, and reutrns the local path |
 
 ## 3. The Python client
+Used from `demo.ipynb`. Two small modules, each with one job.
+
+### 3.1 `P2PClient` HTTP wrapper
+The **only** part of the Python side that knows the Rust node exists. Thin `requests` wrapper around `/health`, `/files`, `/fetch`: converts transport errors and non 200 responses into a single `P2PError`. See [evaluation.md](evaluation.md) for the error-handling convention.
+
+### 3.2 `P2PDataset` cache and dataset API
+Everything a researcher calls from the notebook. It never talks HTTP directly, it goes thourgh `P2PClient`.
+| Method | Role |
+|---|---|
+| `files()` / `files_df()` | Flatten all peer manifests into a list / a display-friendly `pandas.DataFrame` (institution, rows, size, columns) |
+| `get(file_name)` | Resolve a file to a local `Path`: check `cache/<hash[:16]>.parquet` first, call `P2PClient.fetch()` only on a cache miss |
+| `load(file_name)` | `get()` + `pandas.read_parquet()`, one file, one DataFrame |
+| `query(*names)` | `get()` + read for severl files independently, returned as a `dict[name, DataFrame]`, no merging |
+| `federate(*names)` | `get()` for several files, then creates a single DuckDB view `dataset` over all of them (`read_parquet([...])`), so they can be queried together with one SQL statement |
+
+The cache key is derived directly from the BLAKE3 hash in the manifest (`hash[:16]`), which matches how the Rust node names files on export, this is what makes cache lookups a pure local check.
 
 ## 4. End-to-end data flow
+Two flows exist for retrieving a remote file: the **CLI** path (typing `fetch <ticket>` directly in a node's terminal) and the **HTTP** path (what the notebook actually uses). Both end up calling the same `downloader.download()` + `store.blobs().export()` sequence in `node.rs`.
+
+**Startup (per node):**
+1. Scan `data/`, hash files, build local manifest
+2. Start `Router` (blobs + gossip protocols)
+3. Join the gossip topic, broadcast local manifest
+4. Start the Axum HTTP server and the fetch task
+5. Enter the interactive command loop
+
+**Fetch, via notebook:**
+1. `p2p.load("file.parquet")` -> `P2PDataset.get()`
+2. `P2PClient.fetch(ticket)` -> `POST /fetch` on the local node
+3. Axum hands the ticket to the fetch task via channel
+4. `downloader.download(hash, peer_id)`, iroh connects to the peer named in the ticket and streams the blob, verifying it chunk by chunk against the BLAKE3 hash
+5. `store.blobs().export(hash, cache/...)` write the verified blob to disk
+6. The path is returned through the `oneshot` channel -> HTTP response -> `pandas.read_parquet()`
+
 
 ## 5. Where to look next
