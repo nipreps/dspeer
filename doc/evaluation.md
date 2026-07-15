@@ -135,7 +135,7 @@ The convetion used here is: `logger.info` for normal events (cache hit, fetch in
 
 
 ## 6. Known limitations
-Here is a list of the limitations currently known for this project. Please not that these can all be resolved, they are not permanent limitations. This list my be related to point 7 on future impreovements. All of these tasks can be planned and carried out in the future. The goal of this project is to be as flexible as possible, so there are countless possibilities available to you, each component can be modified or removed as you wish. 
+Here is a list of the limitations currently known for this project. Please not that these can all be resolved, they are not permanent limitations. This list my be related to point 7 on future improvements. All of these tasks can be planned and carried out in the future. The goal of this project is to be as flexible as possible, so there are countless possibilities available to you, each component can be modified or removed as you wish. 
 - No automatic deletion of manifests for deleted peers (orphaned JSON files that remains in `data/peers_manifest`)
 - `Event::NeighborUp` / `Event::NeighborDown` received by the code but ignored (`Ok(_) => {}`), network join/leave events are neither processed nor logged.
 - Manual availability refresh only (`refresh`), no folder watcher or periodic rescan.
