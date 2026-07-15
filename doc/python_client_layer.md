@@ -324,8 +324,6 @@ Use in notebook
 con = dataset.federate("yellow_tripdata_2026-01.parquet","yellow_tripdata_2026-02.parquet")
 
 df2 = con.sql("""SELECT * FROM dataset WHERE "passenger_count" > 2 """).df()
-
-df2
 ```
 
 ### 5.4 `filter_passenger()` example of a custom function
