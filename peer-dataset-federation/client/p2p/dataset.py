@@ -146,3 +146,10 @@ class P2PDataset:
         con.execute(f"CREATE VIEW dataset AS SELECT * FROM read_parquet({paths_str!r})")
         logger.info("federated view 'dataset' created from %d file(s)", len(paths))
         return con
+
+    # Convenience function built on top of federate(): runs the exact same SQL a researcher would write by hand,
+    # but hides it behind a plain method call.
+    # Shows how project specific shortcuts can ba added on top of the federated view without requiring the researcher
+    # to know SQL.
+    def filter_passenger(self, con: duckdb.DuckDBPyConnection, min_passengers: int) -> pd.DataFrame:
+        return con.sql(f'SELECT * FROM dataset WHERE "passenger_count" > {min_passengers}').df()

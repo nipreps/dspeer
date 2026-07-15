@@ -327,3 +327,21 @@ df2 = con.sql("""SELECT * FROM dataset WHERE "passenger_count" > 2 """).df()
 
 df2
 ```
+
+### 5.4 `filter_passenger()` example of a custom function
+`filter_passenger()` illustrates the value of `federate()`: once the dataset view has been created, you can write Python methods that encapsulate a specific SQL query, so that the user doesn't need to know SQL for their recurring use cases. It's the same principle as `load()`/`query()` compared to `get()`: a convenience layer built on top of a more general building block.
+```Python
+# Convenience function built on top of federate(): runs the exact same SQL a researcher would write by hand,
+# but hides it behind a plain method call.
+# Shows how project specific shortcuts can ba added on top of the federated view without requiring the researcher
+# to know SQL.
+def filter_passenger(self, con: duckdb.DuckDBPyConnection, min_passengers: int) -> pd.DataFrame:
+    return con.sql(f'SELECT * FROM dataset WHERE "passenger_count" > {min_passengers}').df()
+```
+`con` is the connection returned by `federate()`, so the dataset view must already exist on that connection. `filter_passenger()` does nothing more than construct the same as the one used manually in the demo notebook. It simply saves the researcher from having to write SQL for the specific filter.     
+use in the notebook:
+```Python
+con = dataset.federate("yellow_tripdata_2026-01.parquet","yellow_tripdata_2026-02.parquet")
+
+df = dataset.filter_passenger(con,3 )
+```
