@@ -1349,7 +1349,7 @@ A periodic rebroadcast could also be considered.
 
 
 ## References
-> Claude chatbot was used at the end to reformat the file / correct the errors
+> Claude chatbot was used at the end to reformat the table of content, annexes and spelling correction
 
 - **R1** | [Rust and Cargo installation](https://doc.rust-lang.org/cargo/getting-started/installation.html)
 - **R2** | [What is iroh?](https://docs.iroh.computer/what-is-iroh)

@@ -1,6 +1,24 @@
 # Axum http server
 In this document, we'll look at how to add the Axum HTTP server to our Rust node.
 
+## Table of Contents
+1. [Overview](#1-overview)
+2. [Dependencies](#2-dependencies)
+3. [api.rs](#3-apirs)
+    - [3.1 Shared state and channels](#31-shared-state-and-channels)
+    - [3.2 GET /health](#32-get-health)
+    - [3.3 GET /files](#33-get-files)
+    - [3.4 POST /fetch](#34-post-fetch)
+    - [3.5 serve()](#35-serve)
+4. [Changes to node.rs](#4-changes-to-noders)
+    - [4.1 Import api.rs](#41-import-apirs)
+    - [4.2 Launch Axum and the fetch task](#42-launch-axum-and-the-fetch-task)
+5. [Changes to main.rs](#5-changes-to-mainrs)
+6. [Result](#6-result)
+    - [6.1 Build and run](#61-build-and-run)
+    - [6.2 Test the endpoints](#62-test-the-endpoints)
+
+
 ## 1. Overview
 The Rust node currently runs entirely in the terminal: it servers files, broadcasts its manifest via gossip, and accepts interactive `fetch` commands. The Python client layer (coming next) needs a way to talk to the node without a terminal. The solution is a local HTTP API.
 

@@ -897,7 +897,7 @@ This week has again been heavily focused on the overall architecture, with the i
 
 **Next steps:**
 - Finish evaluation markdown
-- Create costum function example for taxi parquet, finish demo notebooks
+- Create custom function example for taxi parquet, finish demo notebooks
 
 ---
 
@@ -910,7 +910,22 @@ This week has again been heavily focused on the overall architecture, with the i
 
 **Next steps:**
 - Start / modify / finish system architectur mardown
-- Create costum function example for taxi parquet, finish demo notebooks
+- Create custom function example for taxi parquet, finish demo notebooks
+
+---
+
+### 15/07/2026
+
+**Work done:**
+- Finish system architecture mardown
+- Create custom function for taxi dataset as an exemple
+
+**Decisions / Observations / Blockers:**
+
+**Next steps:**
+- Correct writing mistake in Mardown file
+- Change mardown in peers_manifest
+- Write global readme
 
 ## Weekly Summary 13/07 - 19/07
 
