@@ -156,5 +156,6 @@ Here is a list of the limitations currently known for this project. Please note 
 - Partial reads to reduce transfers for larger Parquet artifacts.
 - Implement a local database (DuckDB), which is useful if we start needing to work with several thousand Parquet files.
 - The node with the API does not need to be directly connected to Python, it would be possible to run the node on a server and allow multiple users to access the file without needing to have that node locally.
+- A flag that would need to be anabled on a peer, allowing it to continuously download all files available on the network. This would ensure that certain nodes maintain the availability of the files.
 
 > Claude chatbot was used only to correct spelling errors, when the document had been completed
