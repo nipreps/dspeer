@@ -8,12 +8,13 @@
 1. [Overview](#1-overview)
 2. [How it works](#2-how-it-works)
 3. [Quickstart](#3-quickstart)
-4. [Repository structure](#4-repository-structure)
-5. [Documentation](#5-documentation)
-6. [Results snapshot](#6-results-snapshot)
-7. [Known limitations and future work](#7-known-limitations-and-future-work)
-8. [Academic context](#8-academic-context)
-9. [License](#9-license)
+4. [Demo notebook](#4-demo-notebook)
+5. [Repository structure](#5-repository-structure)
+6. [Documentation](#6-documentation)
+7. [Results snapshot](#7-results-snapshot)
+8. [Known limitations and future work](#8-known-limitations-and-future-work)
+9. [Academic context](#9-academic-context)
+10. [License](#10-license)
 
 ## 1. Overview
 
@@ -49,7 +50,17 @@ pip install -r requirements.txt
 jupyter lab   # open demo.ipynb
 ```
 
-## 4. Repository structure
+## 4. Demo notebook
+
+Once your peer is running and the Python environment is set up (see [Quickstart](#3-quickstart)), open [`peer-dataset-federation/client/demo.ipynb`](peer-dataset-federation/client/demo.ipynb) - it's the fastest way to see the federation in action. Cell by cell, it walks through the whole client API:
+- `dataset.files()` / `dataset.files_df()` - discover what's available across all connected peers
+- `dataset.load(file_name)` - fetch a single file into a `pandas.DataFrame`
+- `dataset.query(*file_names)` - fetch several files independently
+- `dataset.federate(*file_names)` - expose several files as one DuckDB view and query them together with SQL
+
+No prior knowledge of iroh, the Rust node, or the HTTP API is needed to follow it: from the notebook's point of view, the federation is just data.
+
+## 5. Repository structure
 
 ```bash
 .
@@ -75,7 +86,7 @@ jupyter lab   # open demo.ipynb
         └── demo.ipynb              # end-to-end demo notebook
 ```
 
-## 5. Documentation
+## 6. Documentation
 
 | Document | What it covers |
 |---|---|
@@ -87,7 +98,7 @@ jupyter lab   # open demo.ipynb
 | [`archive/iroh_setup_guide.md`](doc/archive/iroh_setup_guide.md) | Step-by-step log of how the Rust/iroh side evolved, from the first MVP to the current gossip-based node |
 | [`archive/PROJECT_MANAGEMENT.md`](doc/archive/PROJECT_MANAGEMENT.md) | Work journal, planning, and meeting notes |
 
-## 6. Results snapshot
+## 7. Results snapshot
 
 A real-world test was run between two peers on the public internet, one in Montréal, Canada and one in Sion, Switzerland (no shared LAN, no VPN):
 | Measurement | Result |
@@ -98,15 +109,15 @@ A real-world test was run between two peers on the public internet, one in Montr
 
 Full test conditions and additional measurements in [`evaluation.md - section 1`](doc/evaluation.md#1-real-world-test-conducted).
 
-## 7. Known limitations and future work
+## 8. Known limitations and future work
 
 This is a proof of concept: the goal was a working end-to-end demonstration, not a production-ready system. Notably, manifest refresh is manual (no folder watcher yet), there's no application-level retry on failed downloads, and the local cache has no size limit. None of these are fundamental blockers - see [`evaluation.md - section 6-7`](doc/evaluation.md#6-known-limitations).
 
-## 8. Academic context
+## 9. Academic context
 
 This project is the Bachelor thesis of Vincent Cordola (ISC, HES-SO Valais-Wallis, 2025-26), carried out at McGill University / Origami lab, Montréal, under the supervision of Prof. Oscar Esteban, Prof. Jean-Baptiste Poline and Dr. Nikhil Bhagwat. Thanks to [Nathan Antonietti](https://github.com/NathanAnto) for taking part in the real-world Montréal (Canada) and Sion (Switzerland) test.
 
-## 9. License
+## 10. License
 
 No license has been set yet - this section will be updated once one is chosen.
 
