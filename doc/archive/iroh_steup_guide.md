@@ -1333,7 +1333,7 @@ Update the startup message accordingly:
 println!("Router started. Type 'fetch <ticket>', 'refresh' or 'quit'");
 ```
 ### 7.5 Result
-After adding a new `.parquet` file to `data/` on a running peer, typing `refresh` in its terminal is enough for the other peers to receive it — no restart required.
+After adding a new `.parquet` file to `data/` on a running peer, typing `refresh` in its terminal is enough for the other peers to receive it - no restart required.
 ```bash
 > refresh
 Manifest rebroadcast (2 file(s))

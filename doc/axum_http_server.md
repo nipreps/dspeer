@@ -32,7 +32,7 @@ Three endpoints are exposed:
 Axum is developed by the Tokio team and runs on the same async runtime already used by iroh.
 
 ## 2. Dependencies
-`axum = "0.8"` — Lightweight HTTP framework built on Tokio. Handles routing, extractors, and JSON responses.
+`axum = "0.8"` - Lightweight HTTP framework built on Tokio. Handles routing, extractors, and JSON responses.
 
 ## 3. api.rs
 > References: [axum repo](https://github.com/tokio-rs/axum), [axum extract](https://docs.rs/axum/latest/axum/extract/index.html), [tokio mpsc](https://docs.rs/tokio/latest/tokio/sync/mpsc/index.html), [tokio oneshot](https://docs.rs/tokio/latest/tokio/sync/oneshot/index.html)

@@ -59,10 +59,10 @@ This document will evolve as the project progresses.
 | **Milestone** | Test behavior under realistic conditions: peers joining/leaving, partial availability, varying bandwidth. | 09.08 | Done |
 | **Milestone** | Improve reliability (resume partial transfers, cache behavior, error handling) and document known limitations. | 09.08 | Done |
 | **Milestone** | Optional (if feasible): evaluate byte-range or partial reads to reduce transfers for larger Parquet artifacts. | 09.08 | Not done |
-| W14 | **5. Packaging, documentation, and final demonstration** | 10.08 - 12.08 | In progress |
+| W14 | **5. Packaging, documentation, and final demonstration** | 10.08 - 12.08 | Done |
 | **Milestone** | Finalize the notebook as the primary demonstration artifact. | 12.08 | Done |
 | **Milestone** | Produce setup scripts/instructions for reproducing the demo on 2–5 machines | 12.08 | Done |
-| **Milestone** | Write a short evaluation report summarizing results, constraints, and recommended next steps for downstream integration work. | 12.08 | In progress |
+| **Milestone** | Write a short evaluation report summarizing results, constraints, and recommended next steps for downstream integration work. | 12.08 | Done |
 | **Milestone** | **Final code submitted** | **17/07/2026 12:00** | Upcoming |
 | **Milestone** | **Final report submitted** | **12/08/2026 12:00** | Upcoming |
 | **Milestone** | **Executive summary** | **25/08/2026** | Upcoming |
