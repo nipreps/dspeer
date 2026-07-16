@@ -1,6 +1,20 @@
 # Installation and usage guide
+
+## Table of Contents
+1. [Overview](#1-overview)
+2. [Prerequisites](#2-prerequisites)
+3. [Preparing the environment](#3-preparing-the-environment)
+4. [Getting the project](#4-getting-the-project)
+5. [Building the Rust node](#5-building-the-rust-node)
+6. [Running your first peer](#6-running-your-first-peer)
+    - [6.1 Start peer (if it is the first peer of the network)](#61-start-peer-if-it-is-the-first-peer-of-the-network)
+    - [6.2 Joining an existing network](#62-joining-an-existing-network)
+7. [Verifying the node (HTTP API)](#7-verifying-the-node-http-api)
+8. [Setting up the Python client](#8-setting-up-the-python-client)
+9. [Running a notebook](#9-running-a-notebook)
+
 ## 1. Overview
-This guide help setting up the project from a fresh Linux machine (or VM) to running a frist end-to-end demo in a jupyter notebook: build the Rust node, start it as a peer, set up the Python client, and query the federated dataset.
+This guide helps you set up the project from a fresh Linux machine (or VM) to running a first end-to-end demo in a Jupyter notebook: build the Rust node, start it as a peer, set up the Python client, and query the federated dataset.
 
 The deployment model is one peer per machine: each institution runs a single peer process on its own machine/VM. This guide follows that model throughout.
 
@@ -9,16 +23,16 @@ The deployment model is one peer per machine: each institution runs a single pee
 |---|---|---|
 | Linux distribution | Target OS for this guide (any recent distro, tested assumptions: Debian/Ubuntu like) | - |
 | Rust | Builds and runs the node | [rustup](https://rust-lang.org/tools/install/) |
-| Python 3.10+ | Runs the client layer and jupyter | [python.org download](https://www.python.org/downloads/) |
-| `pip`/ `venv` | Python dependency | included with Python 3 |
+| Python 3.10+ | Runs the client layer and Jupyter | [python.org download](https://www.python.org/downloads/) |
+| `pip` / `venv` | Python dependency and environment management | included with Python 3 |
 | `git` | Cloning the repository | your distro's package manager |
 
-The Rust dependencies (iroh, iroh-blobs, iroh-gossip, Axum, ...) are fetched automatically by `cargo build`, and the Python dependencies by `pip install -r requirements.txt`
+The Rust dependencies (iroh, iroh-blobs, iroh-gossip, Axum, ...) are fetched automatically by `cargo build`, and the Python dependencies by `pip install -r requirements.txt`.
 
 
 ## 3. Preparing the environment
 `tmux` is used to keep the P2P node and the Jupyter server running independently of the terminal session, allowing you to simulate realistic disconnection/reconnection conditions without interrupting the processes currently being evaluated. It's not mandatory but very useful.  
-tmux does not replace a real system service (`systemd`): if the VM restarts, everything stops, there is no automatic restart.
+`tmux` does not replace a real system service (`systemd`): if the VM restarts, everything stops; there is no automatic restart.
 ```bash
 # build-essential: Compile and link native code (C, and Rust binaries)
 # git: Retrieve repository and Cargo's Git dependencies
@@ -27,7 +41,7 @@ tmux does not replace a real system service (`systemd`): if the VM restarts, eve
 
 sudo apt install -y build-essential git tmux pkg-config libssl-dev
 ```
-Follow the official instructions https://rust-lang.org/tools/install/. 
+Follow the [official instructions](https://rust-lang.org/tools/install/).
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source "$HOME/.cargo/env"
@@ -37,14 +51,14 @@ Once installed, open a new terminal and check:
 rustc --version
 cargo --version
 ```
-Both should print a version number
+Both should print a version number.
 
 ## 4. Getting the project
 ```bash
 git clone https://github.com/VinceCor/vincent-cordola-bthesis-p2p_dataset_federation
 cd vincent-cordola-bthesis-p2p_dataset_federation
 ```
-The project tree is described in [README.md](../README.md). The two parts you will work wite are `peer-dataset-federation/node/` and `peer-dataset-federation/client/`. The `doc/` folder holds the design documents, `rust-mvp-iroh-network` allows you to see how the Rust implementation (iroh) was carried out, not needed to run the final notebook.
+The project tree is described in [README.md](../README.md). The two parts you will work with are `peer-dataset-federation/node/` and `peer-dataset-federation/client/`. The `doc/` folder holds the design documents. `rust-mvp-iroh-network` lets you see how the Rust implementation (iroh) was carried out; it is not needed to run the final notebook.
 
 ## 5. Building the Rust node
 ```bash
@@ -59,12 +73,12 @@ A "peer" is a single process that both serves your local Parquet files to the ne
 | Variable | Required | Meaning |
 |---|---|---|
 | `INSTITUTION` | yes | Name advertised in this node's manifest (e.g. `mcgill`, `hes-so`) |
-| `BOOTSTRAP_PEERS` | no | Comma separated `EndpointId` to join an existing network. Leave unset if you are the first peer |
+| `BOOTSTRAP_PEERS` | no | Comma-separated `EndpointId` to join an existing network. Leave unset if you are the first peer |
 
 Place any `.parquet` file you want to share in `peer-dataset-federation/node/data/`.
 
 ### 6.1 Start peer (if it is the first peer of the network)
-Then in your terminal
+Then in your terminal:
 ```bash
 # new tmux
 tmux new -s node
@@ -82,10 +96,10 @@ Gossip: manifest broadcast for institution 'peer1'
 Router started. Type 'fetch <ticket>' or 'quit'
 HTTP API listening on http://0.0.0.0:8080
 ```
-The `PublicKey(...)` value in the first line is this peer's `EndpointId`, another peer will need it to join your network via `BOOTSTRAP_PEERS`.
+The `PublicKey(...)` value in the first line is this peer's `EndpointId`; another peer will need it to join your network via `BOOTSTRAP_PEERS`.
 
 ### 6.2 Joining an existing network
-if someone else already started a peer dans gave you their `EndpointId`.
+If someone else already started a peer and gave you their `EndpointId`:
 ```bash
 INSTITUTION=<INSTITUTION> BOOTSTRAP_PEERS=<their_endpoint_id> cargo run -- peer
 ```
@@ -116,11 +130,11 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
-`requirements.txt` covers the client library itself (`requests`, `pandas`, `duckdb`,`jupyter`,`jupyterlab`,`pyarrow`)
+`requirements.txt` covers the client library itself (`requests`, `pandas`, `duckdb`, `jupyter`, `jupyterlab`, `pyarrow`).
 To leave the virtual environment later: `deactivate`.
 
 ## 9. Running a notebook
-Launch Jupyter in another tmux session (so as not to block the terminal)
+Launch Jupyter in another tmux session (so as not to block the terminal):
 ```bash
 tmux new -s jupyter
 # Make sure you're in the venv (source .venv/bin/activate)
@@ -154,12 +168,12 @@ df = dataset.load("sample.parquet")
 df.head()
 
 # 3. Query several files independently
-results = dataset.query("sample.parquet","orther_sample.parquet")
+results = dataset.query("sample.parquet", "other_sample.parquet")
 for name, df in results.items():
     print(name, df.shape)
 
 # 4. Federate several files into one DuckDB view and run SQL across them
-con = dataset.federate("sample.parquet","orther_sample.parquet")
+con = dataset.federate("sample.parquet", "other_sample.parquet")
 
 df = con.sql("""SELECT * FROM dataset WHERE "passenger_count" > 2 """).df()
 
