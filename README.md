@@ -68,8 +68,8 @@ jupyter lab   # open demo.ipynb
     ├── node/                       # Rust: iroh node + Axum HTTP API
     │   ├── src/                    # main.rs, node.rs, api.rs
     │   └── data/                   # place your .parquet files here
-    │       └── peers_manifest/      # manifest folder
-    │           └── README.md        # explanation of the "data" folder
+    │       └── peers_manifest/     # manifest folder
+    │           └── README.md       # explanation of the "data" folder
     └── client/                     # Python: HTTP client + notebook
         ├── p2p/                    # client.py, dataset.py
         └── demo.ipynb              # end-to-end demo notebook
