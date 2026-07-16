@@ -18,11 +18,10 @@ In this document, we'll look at how to add the Axum HTTP server to our Rust node
     - [6.1 Build and run](#61-build-and-run)
     - [6.2 Test the endpoints](#62-test-the-endpoints)
 
-
 ## 1. Overview
-The Rust node currently runs entirely in the terminal: it servers files, broadcasts its manifest via gossip, and accepts interactive `fetch` commands. The Python client layer (coming next) needs a way to talk to the node without a terminal. The solution is a local HTTP API.
+The Rust node currently runs entirely in the terminal: it serves files, broadcasts its manifest via gossip, and accepts interactive `fetch` commands. The Python client layer (coming next) needs a way to talk to the node without a terminal. The solution is a local HTTP API.
 
-Three endpoint are exposed:
+Three endpoints are exposed:
 | Endpoint | Method | Description |
 |---|---|---|
 | `/health` | GET | Returns the node status and institution name |
@@ -30,13 +29,13 @@ Three endpoint are exposed:
 | `/fetch` | POST | Triggers an iroh-blobs download by ticket, returns the local cache path |
 
 **Why Axum?**   
-Axum is developed by the Tokio team and runs on the same async runtime already use by iroh.
+Axum is developed by the Tokio team and runs on the same async runtime already used by iroh.
 
 ## 2. Dependencies
-`axum = "0.8"` Lightweight HTTP framework build on Tokio. Handles routing, extractors, and JSON responses.
+`axum = "0.8"` — Lightweight HTTP framework built on Tokio. Handles routing, extractors, and JSON responses.
 
 ## 3. api.rs
-> References: [axum repos](https://github.com/tokio-rs/axum), [axum extract](https://docs.rs/axum/latest/axum/extract/index.html), [tokio mpsc](https://docs.rs/tokio/latest/tokio/sync/mpsc/index.html), [tokio oneshot](https://docs.rs/tokio/latest/tokio/sync/oneshot/index.html)
+> References: [axum repo](https://github.com/tokio-rs/axum), [axum extract](https://docs.rs/axum/latest/axum/extract/index.html), [tokio mpsc](https://docs.rs/tokio/latest/tokio/sync/mpsc/index.html), [tokio oneshot](https://docs.rs/tokio/latest/tokio/sync/oneshot/index.html)
 
 ### 3.1 Shared state and channels
 `AppState`
@@ -44,11 +43,11 @@ Axum is developed by the Tokio team and runs on the same async runtime already u
 pub struct AppState {
     pub institution: String,
     // Forward fetch requests to node.rs
-    // The actual iroh download run there, this filed is the bridge
+    // The actual iroh download runs there, this field is the bridge
     pub fetch_tx: tokio::sync::mpsc::Sender<FetchRequest>,
 }
 ```
-Axum handlers are plain async functions. To give them access to node data, Axum use an extractor called `State`. Every handler that declares `State<Arc<AppState>>` in its arguments receives a clone of the `Arc`, not a copy of the data.
+Axum handlers are plain async functions. To give them access to node data, Axum uses an extractor called `State`. Every handler that declares `State<Arc<AppState>>` in its arguments receives a clone of the `Arc`, not a copy of the data.
 
 `FetchRequest`
 ```Rust
@@ -58,7 +57,7 @@ pub struct FetchRequest {
     pub reply: tokio::sync::oneshot::Sender<Result<String, String>>,
 }
 ```
-A `oneshot` channel is  a single-use channel: the sender fires once, the receiver gets exactly one value. Here it is used to carry the download result from the fetch task back to the HTTP handler. Without it, the handler would have no way to know when the download finished.
+A `oneshot` channel is a single-use channel: the sender fires once, the receiver gets exactly one value. Here it is used to carry the download result from the fetch task back to the HTTP handler. Without it, the handler would have no way to know when the download finished.
 
 ### 3.2 GET /health
 ```Rust
@@ -68,7 +67,7 @@ async fn health(State(state): State<Arc<AppState>>) -> Json<Value> {
     Json(json!({"status": "ok", "institution": state.institution,}))
 }
 ```
-`Json(json!({...}))` serialize the value directly to an HTTP response with `Content-type: application/json`. The json! macro from `serde_json` builds the `Value` inline.
+`Json(json!({...}))` serializes the value directly into an HTTP response with `Content-Type: application/json`. The `json!` macro from `serde_json` builds the `Value` inline.
 
 ### 3.3 GET /files
 ```Rust
@@ -94,9 +93,9 @@ async fn files() -> Result<Json<Value>, StatusCode> {
     Ok(Json(json!({"manifests": manifests})))
 }
 ```
-`Result<Json<Value>, StatusCode` is the return type. Axum converts both variants into HTTP repsons. The `?` operator propagates errors directly to the `Err` variant.   
-`tokio::fs::read_dir` and `tokio::fs::read_to_string` are the async versions of the standard library equivalents. Using them here keeps the Tokio runtime free to handle other requests while the disl I/O is in progress.  
-`serde_json::from_str` deserializes the JSON file into a `Manifest` struct(defined in `node.rs`).
+`Result<Json<Value>, StatusCode>` is the return type. Axum converts both variants into HTTP responses. The `?` operator propagates errors directly to the `Err` variant.   
+`tokio::fs::read_dir` and `tokio::fs::read_to_string` are the async versions of the standard library equivalents. Using them here keeps the Tokio runtime free to handle other requests while the disk I/O is in progress.  
+`serde_json::from_str` deserializes the JSON file into a `Manifest` struct (defined in `node.rs`).
 
 ### 3.4 POST /fetch
 ```Rust
@@ -133,7 +132,7 @@ async fn fetch(State(state): State<Arc<AppState>>, Json(body): Json<FetchBody>) 
 }
 ```
 `Json(body): Json<FetchBody>` is the Axum body extractor. It reads the request body, deserializes it as JSON into `FetchBody`, and injects the result.  
-`tokio::sync::oneshot::channel()` creates a matched sender/receiver pair. The sender goes into `FetchRequest` and is forwarder to the fetch task.   
+`tokio::sync::oneshot::channel()` creates a matched sender/receiver pair. The sender goes into `FetchRequest` and is forwarded to the fetch task.   
 `state.fetch_tx.send(req).await` puts the request into the `mpsc` channel.
 
 ### 3.5 serve()
@@ -152,8 +151,8 @@ pub async fn serve(state: Arc<AppState>) {
     axum::serve(listener, app).await.unwrap();
 }
 ```
-`Router::new()` builds the route table. `.route("/health", get(health))` register the `health` function as the handler for `GET /health`. `.with_state(state)` makes the `Arc<AppState>` available to every handler that declares a `State` extractor.  
-`TcpListener::bind("0.0.0.0:8080")` binds to all interface on port 8080.    
+`Router::new()` builds the route table. `.route("/health", get(health))` registers the `health` function as the handler for `GET /health`. `.with_state(state)` makes the `Arc<AppState>` available to every handler that declares a `State` extractor.  
+`TcpListener::bind("0.0.0.0:8080")` binds to all interfaces on port 8080.    
 `axum::serve(listener, app).await` runs the server indefinitely. Because `serve()` is called inside `tokio::spawn`, it runs as a background task and does not block the rest of `peer()`.
 
 ## 4. Changes to node.rs
@@ -168,7 +167,7 @@ use std::sync::Arc;
 `crate::api` refers to `api.rs` in the same `src/` directory. [Arc](https://doc.rust-lang.org/std/sync/struct.Arc.html) (Atomically Reference Counted) is the standard Rust mechanism for sharing ownership of data across multiple async tasks safely.
 
 ### 4.2 Launch Axum and the fetch task
-This block was add in `peer()`, after the Router is started and `cache_dir` is created, and before the stdin loop.
+This block was added in `peer()`, after the Router is started and `cache_dir` is created, and before the stdin loop.
 ```Rust
 // Channel: Axum /fetch handler -> fetch task
 // Capacity 32: up to 32 requests can be queued before the sender blocks
@@ -181,7 +180,7 @@ let api_state = Arc::new(AppState {
 });
 tokio::spawn(serve(api_state));
 
-// Fetch task: receives FetechRequests from the HTTP handler and runs the iroh download
+// Fetch task: receives FetchRequests from the HTTP handler and runs the iroh download
 // Runs concurrently with the Router and the gossip task
 let fetch_downloader = store.downloader(&endpoint);
 let fetch_cache_dir = cache_dir.clone();
@@ -220,13 +219,13 @@ tokio::spawn(async move {
 });
 ```
 `mpsc::channel::<FetchRequest>(32)`     
-`mpsc` stands for Multiple Producer Single Consumer. Here only one producer exists (the Axum handler), but `mpsc` is the right tool because it supports backpressure, if 32 requests are already queued, the 33rd `.send().await` will wait until a slot is free.
+`mpsc` stands for Multiple Producer Single Consumer. Here only one producer exists (the Axum handler), but `mpsc` is the right tool because it supports backpressure: if 32 requests are already queued, the 33rd `.send().await` will wait until a slot is free.
 
 `tokio::spawn(serve(api_state))`    
 `tokio::spawn` launches the Axum server as an independent Tokio task. It runs concurrently with everything else.
 
 **The fetch task**  
-`fetch_rx.recv().await` blocks asynchronously until a `fetchRequest` arrives. The download logic is identical to the existing stdin `fetch` command. The only difference is that the result is sent back over `req.reply` instead of being printed to stdout.
+`fetch_rx.recv().await` blocks asynchronously until a `FetchRequest` arrives. The download logic is identical to the existing stdin `fetch` command. The only difference is that the result is sent back over `req.reply` instead of being printed to stdout.
 
 `let _ = req.reply.send(result)`    
 The return value of `oneshot::Sender::send` is discarded with `let _`. If the HTTP client disconnected before the download finished, the receiver would have been dropped and `send` would return an error.
@@ -248,7 +247,7 @@ then run
 # <institution> -> name of your peer
 INSTITUTION=<institution> cargo run -- peer
 ```
-You should see the HTTP server start alongside the rest of the node, example:
+You should see the HTTP server start alongside the rest of the node, for example:
 ```bash
 Peer: EndpointAddr { id: PublicKey(bf121c2bbb96a55b17b676db6de5428d11a63de88f7b21a3f8765933a9050a8f), addrs: {Ip(172.18.180.164:56444)} }
 Institution: peer1
@@ -271,7 +270,7 @@ Expected response
 {"institution":"<institution>","status":"ok"}
 ```
 
-**GET files**
+**GET /files**
 ```bash
 curl http://localhost:8080/files
 ```
@@ -299,3 +298,5 @@ Expected response
 ```bash
 {"path":"cache/3b9de451872ec4a1.parquet"}
 ```
+
+> Claude chatbot was used only to correct spelling errors, when the document had been completed
