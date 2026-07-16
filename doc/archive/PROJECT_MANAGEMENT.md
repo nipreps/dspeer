@@ -6,7 +6,7 @@
 
 This document provides an overview of the project. It includes the project plan, potential project risks, meeting schedules, and a work journal for daily tracking of the project.
 
-This document will evolve as the project progresses, and the initial information was taken directly from the document: [Donnée du travail de bachelor](https://isc-hei.github.io/isc-typst-tb-descriptions/)
+This document will evolve as the project progresses.
 
 ## Table of Contents
 1. [Planning](#1-Planning)
@@ -46,23 +46,23 @@ This document will evolve as the project progresses, and the initial information
 | Task | Add Axum HTTP server to the Rust node | 19.07 | Done |
 | Task | Implement `P2PClient`, thin HTTP wrapper around the Rust API | 19.07 | Done |
 | Task | Implement `P2PDataset`, cache management and on-demand fetch | 19.07 | Done |
-| **Milestone** | Produce a first working notebook that discovers the network dataset, loads it into standard dataframe tooling, and runs queries spanning multiple peers. | 19.07 | Upcoming |
+| **Milestone** | Produce a first working notebook that discovers the network dataset, loads it into standard dataframe tooling, and runs queries spanning multiple peers. | 19.07 | Done |
 | Task | Implement p2p.load(filename), fetch + return pandas Dataframe via DuckDB | 19.07 | Done |
 | Task | Implement p2p.query, DuckDB query across all cached Parquet files | 19.07 | Done |
-| Task | Write demo notebooks | 19.07 | Upcoming |
-| Task | End-to-end validation VM | 19.07 | Upcoming |
-| **Milestone** | Migrate the testbed to virtual machines with separate network stacks to exercise NAT traversal and relay fallback for the first time. | 19.07 | Upcoming |
+| Task | Write demo notebooks | 19.07 | Done |
+| Task | End-to-end validation VM | 19.07 | Done |
+| **Milestone** | Migrate the testbed to virtual machines with separate network stacks to exercise NAT traversal and relay fallback for the first time. | 19.07 | Done |
 | Task | Set up 2 VirtualBox VMs with separate networks | 19.07 | Done |
 | Task | Deploy and run the Rust node on both VMs | 19.07 | Done |
-| Task | Validate NAT traversal and relay fallback (iroh handles it, validate via logs) | 19.07 | Upcoming |
-| W11-W13 | **4. Robustness and evaluation in a 2–5 machine testbed** | 20.07 - 09.08 | Upcoming |
-| **Milestone** | Test behavior under realistic conditions: peers joining/leaving, partial availability, varying bandwidth. | 09.08 | Upcoming |
-| **Milestone** | Improve reliability (resume partial transfers, cache behavior, error handling) and document known limitations. | 09.08 | Upcoming |
-| **Milestone** | Optional (if feasible): evaluate byte-range or partial reads to reduce transfers for larger Parquet artifacts. | 09.08 | Upcoming |
-| W14 | **5. Packaging, documentation, and final demonstration** | 10.08 - 12.08 | Upcoming |
-| **Milestone** | Finalize the notebook as the primary demonstration artifact. | 12.08 | Upcoming |
-| **Milestone** | Produce setup scripts/instructions for reproducing the demo on 2–5 machines | 12.08 | Upcoming |
-| **Milestone** | Write a short evaluation report summarizing results, constraints, and recommended next steps for downstream integration work. | 12.08 | Upcoming |
+| Task | Validate NAT traversal and relay fallback (iroh handles it, validate via logs) | 19.07 | Done |
+| W11-W13 | **4. Robustness and evaluation in a 2–5 machine testbed** | 20.07 - 09.08 | Done |
+| **Milestone** | Test behavior under realistic conditions: peers joining/leaving, partial availability, varying bandwidth. | 09.08 | Done |
+| **Milestone** | Improve reliability (resume partial transfers, cache behavior, error handling) and document known limitations. | 09.08 | Done |
+| **Milestone** | Optional (if feasible): evaluate byte-range or partial reads to reduce transfers for larger Parquet artifacts. | 09.08 | Not done |
+| W14 | **5. Packaging, documentation, and final demonstration** | 10.08 - 12.08 | In progress |
+| **Milestone** | Finalize the notebook as the primary demonstration artifact. | 12.08 | Done |
+| **Milestone** | Produce setup scripts/instructions for reproducing the demo on 2–5 machines | 12.08 | Done |
+| **Milestone** | Write a short evaluation report summarizing results, constraints, and recommended next steps for downstream integration work. | 12.08 | In progress |
 | **Milestone** | **Final code submitted** | **17/07/2026 12:00** | Upcoming |
 | **Milestone** | **Final report submitted** | **12/08/2026 12:00** | Upcoming |
 | **Milestone** | **Executive summary** | **25/08/2026** | Upcoming |
