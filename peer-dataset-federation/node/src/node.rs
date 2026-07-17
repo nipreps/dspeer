@@ -49,8 +49,6 @@ pub struct ParquetStats {
     pub columns: Vec<ColumnMeta>,
 }
 
-
-
 // Derives a stable 32-byte gossip TopicId
 // https://docs.iroh.computer/connecting/gossip#picking-a-topic-id
 fn manifest_topic_id() -> TopicId {
@@ -81,7 +79,6 @@ fn bootstrap_peers_from_env() -> Result<Vec<EndpointId>> {
     }
     Ok(peers)
 }
-
 
 // Parquet file reader function (footer only)
 // docs.rs/parquet https://docs.rs/parquet/latest/parquet/
@@ -115,7 +112,6 @@ fn read_parquet_stats(path: &Path) -> Result<ParquetStats> {
         columns,
     })
 }
-
 
 // Scans /data for .parquet files, hashes each one into `store`, and returns the resulting manifest entries.
 // Same scan/hash as `peer()`, just collected into a Vec<ManifestFile> instead of only printing
@@ -175,8 +171,6 @@ async fn save_peer_manifest(manifest: &Manifest) -> Result<()> {
 
     Ok(())
 }
-
-
 
 // peer: single process that simultaneously serves local files and accepts interactive fetch commands.
 // 
@@ -315,7 +309,6 @@ pub async fn peer() -> Result<()> {
         }
     });
 
-
     // Prepare cache/ and the downloader once, reused for every fetch command
     let cache_dir = PathBuf::from("cache");
     tokio::fs::create_dir_all(&cache_dir)
@@ -453,7 +446,6 @@ pub async fn peer() -> Result<()> {
 
         print!("> ")
     }
-
 
     // Shutdown
     gossip_task.abort();

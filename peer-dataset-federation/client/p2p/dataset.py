@@ -68,7 +68,6 @@ class P2PDataset:
         return df[["file_name", "institution", "num_rows", "num_row_groups", "size", "columns"]]
 
 
-
     # Return a local Path to a *file_name*, fetching it from the network if it is not already cached.
     def get(self, file_name: str) -> Path | None:
         # Walk all peer manifests to find the file
