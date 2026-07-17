@@ -58,6 +58,17 @@ Currently, manifest sharing is not automated. The manifest is updated only at st
 **Variable bandwidth**   
 The transfer of a Parquet file uses BLAKE3-verified streaming: the data is divided into chunks, and each chunk is verified on the fly during reception rather than afterward. This means that available bandwidth directly and linearly translates to transfer time (there is no separate verification phase that would be added after the download), but it also means that there is no automatic adaptation (no compression, no quality negotiation): the project simply operates at the available bandwidth and does not adapt to it.
 
+**Warning**
+
+During a local run, the node sometimes logs:
+![warn](media/warn_iroh.png)
+
+This comes from iroh's internal `net_report` module, which probes the network at startup to characterize the NAT type of the host. It is documented as an internal component of the [iroh repository](https://github.com/n0-computer/iroh).
+
+Iroh determines the endpoint's public address using [QUIC Address Discovery (QAD)](https://www.iroh.computer/blog/qad): when the endpoint reaches out to different relay servers, each one reports back the public IPv4/port it observed via an `OBSERVED_ADDRESS` QUIC frame. For a typical home NAT with a single public IP, this observed address stays the same regardless of which relay answers. This warning means the opposite was observed: the reported public IPv4 address differs depending on which destination server is contacted, which corresponds to the `mapping_varies_by_dest_ip` field surfaced by [iroh-doctor](https://docs.iroh.computer/troubleshooting) reports.
+
+This behavior is characteristic of a destination-dependent NAT, which is harder to hole-punch through, since the external mapping the peer will need to be reached on cannot be predicted in advance from a single probe. It is not an error: the endpoint still works, but a direct connection is less likely to be established for that peer, and traffic is more likely to fall back to the relay (see [2. NAT traversal and relay fallback](#2-nat-traversal-and-relay-fallback)).
+
 ## 4. Reliability
 > References: [iroh blobs](https://docs.iroh.computer/protocols/blobs), [blob store design](https://www.iroh.computer/blog/blob-store-design-challenges), [BLAKE3](https://www.ietf.org/archive/id/draft-aumasson-blake3-00.html), [iroh tags](https://www.iroh.computer/blog/a-richer-tags-api)
 
