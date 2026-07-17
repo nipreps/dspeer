@@ -15,6 +15,8 @@ For network behavior under real-world conditions (NAT traversal, relay fallback,
 Each institution runs the same two processes side by side:
 - a **Rust node** (`node/`), which joins the iroh network, holds the institution's Parquet files, and exposes a local HTTP API
 - a **Python client** (`client/`), used from a notebook, which talks only to its own local node over HTTP and never touches iroh directly
+![global topology](media/global_topology-p2p_dataset_federation.drawio(1).png)
+*Created using Claude and Drawio*
 
 Nodes talk to each other over iroh (direct connections, NAT traversal, relay fallback, all delegated to iroh, see [evaluation.md 2](evaluation.md#2-nat-traversal-and-relay-fallback)). Python clients never talk to each other; from the researcher's point of view, the whole federation is reachable through their own local node.
 
