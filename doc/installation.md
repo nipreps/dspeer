@@ -55,10 +55,12 @@ Both should print a version number.
 
 ## 4. Getting the project
 ```bash
-git clone https://github.com/VinceCor/vincent-cordola-bthesis-p2p_dataset_federation
-cd vincent-cordola-bthesis-p2p_dataset_federation
+git clone --depth 1 https://github.com/nipreps/dspeer
+cd dspeer
 ```
-The project tree is described in [README.md](../README.md). The two parts you will work with are `peer-dataset-federation/node/` and `peer-dataset-federation/client/`. The `doc/` folder holds the design documents. `rust-mvp-iroh-network` lets you see how the Rust implementation (iroh) was carried out; it is not needed to run the final notebook.
+The project tree is described in [README.md](../README.md). The two parts you will work with are `peer-dataset-federation/node/` and `peer-dataset-federation/client/`. The `doc/` folder holds the design documents. `doc/archive/rust-mvp-iroh-network` lets you see how the Rust implementation (iroh) was carried out; it is not needed to run the final notebook.
+
+`--depth 1` is recommended: the full history carries the original thesis test fixtures and is around 120 MB.
 
 ## 5. Building the Rust node
 ```bash
