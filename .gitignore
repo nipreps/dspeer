@@ -1,0 +1,7 @@
+peer-dataset-federation/node/target/
+peer-dataset-federation/testbed/data/
+peer-dataset-federation/node/Cargo.lock
+peer-dataset-federation/client/.venv/
+peer-dataset-federation/client/p2p/__pycache__/
+peer-dataset-federation/node/cache
+.vscode/
