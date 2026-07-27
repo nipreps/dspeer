@@ -65,6 +65,7 @@ No prior knowledge of iroh, the Rust node, or the HTTP API is needed to follow i
 ```bash
 .
 ├── README.md                       # you are here
+├── LICENSE                         # Apache License 2.0
 ├── doc/                            # design docs and write-ups
 │   ├── system_architecture.md      # components, responsibilities, data flow
 │   ├── installation.md             # step-by-step setup guide
@@ -119,6 +120,6 @@ This project is the Bachelor thesis of Vincent Cordola (ISC, HES-SO Valais-Walli
 
 ## 10. License
 
-No license has been set yet - this section will be updated once one is chosen.
+This project is licensed under the [Apache License 2.0](LICENSE).
 
 > Claude chatbot was used to correct spelling errors and reformat the file, once the document had been completed a first time.
