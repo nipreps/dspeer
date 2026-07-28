@@ -94,7 +94,7 @@ Full walkthrough, including prerequisites and troubleshooting, in
 [`doc/installation.md`](doc/installation.md). The essentials:
 
 ```bash
-git clone --depth 1 https://github.com/nipreps/dspeer
+git clone https://github.com/nipreps/dspeer
 cd dspeer/peer-dataset-federation
 
 # 1. Build and run the Rust node (first peer, no bootstrap needed)
@@ -111,9 +111,6 @@ jupyter lab   # open demo.ipynb
 Drop your own `.parquet` files into `peer-dataset-federation/node/data/`; see
 [that folder's README](peer-dataset-federation/node/data/README.md) for the
 conventions and for how to reproduce the measurements below.
-
-`--depth 1` is recommended: the full history carries the original thesis test
-fixtures and is around 120 MB.
 
 ## Demo notebook
 
@@ -225,8 +222,14 @@ The full development history is preserved here commit by commit. The original
 repository is
 [VinceCor/vincent-cordola-bthesis-p2p_dataset_federation](https://github.com/VinceCor/vincent-cordola-bthesis-p2p_dataset_federation);
 the state submitted as the thesis is tagged `official_submit` there, at commit
-`c65ec18`. The code was released by its author under the Apache License 2.0
-before being imported.
+`c65ec18`, and the same point is tagged `official_submit` here. The code was
+released by its author under the Apache License 2.0 before being imported.
+
+One difference from the source repository: two 60 MB NYC TLC test fixtures were
+removed from this repository's history, because they were most of its download
+weight and none of its code. Every commit, author, date and message is intact,
+but commit ids from 2026-07-13 onward therefore differ from the originals. The
+source repository above remains the byte-exact archive of the thesis.
 
 Parts of the original documentation were language-edited with an AI assistant
 after being written; the same applies to portions of this README.
