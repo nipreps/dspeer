@@ -23,11 +23,10 @@ The deployment model is one peer per machine: each institution runs a single pee
 |---|---|---|
 | Linux distribution | Target OS for this guide (any recent distro, tested assumptions: Debian/Ubuntu like) | - |
 | Rust | Builds and runs the node | [rustup](https://rust-lang.org/tools/install/) |
-| Python 3.10+ | Runs the client layer and Jupyter | [python.org download](https://www.python.org/downloads/) |
-| `pip` / `venv` | Python dependency and environment management | included with Python 3 |
+| [uv](https://docs.astral.sh/uv/) | Python dependency and environment management | [uv installation](https://docs.astral.sh/uv/getting-started/installation/) |
 | `git` | Cloning the repository | your distro's package manager |
 
-The Rust dependencies (iroh, iroh-blobs, iroh-gossip, Axum, ...) are fetched automatically by `cargo build`, and the Python dependencies by `pip install -r requirements.txt`.
+The Rust dependencies (iroh, iroh-blobs, iroh-gossip, Axum, ...) are fetched automatically by `cargo build`, and the Python dependencies by `uv sync`.
 
 
 ## 3. Preparing the environment
@@ -127,19 +126,22 @@ curl -X POST http://localhost:8080/fetch \
 ## 8. Setting up the Python client
 ```bash
 cd peer-dataset-federation/client
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+uv sync
 ```
-`requirements.txt` covers the client library itself (`requests`, `pandas`, `duckdb`, `jupyter`, `jupyterlab`, `pyarrow`).
-To leave the virtual environment later: `deactivate`.
+This creates `.venv` with the dependencies declared in `pyproject.toml` (`requests`, `pandas`, `duckdb`, `jupyter`, `jupyterlab`, `pyarrow`), at the versions pinned in `uv.lock`.
+Prefix commands with `uv run` to run them inside that environment.There is no need to activate it.
+
+Quick check that the client can reach a running node:
+```bash
+uv run python -c "from p2p.client import P2PClient; print(P2PClient().health())"
+```
 
 ## 9. Running a notebook
 Launch Jupyter in another tmux session (so as not to block the terminal):
 ```bash
 tmux new -s jupyter
-# Make sure you're in the venv (source .venv/bin/activate)
-jupyter lab
+cd peer-dataset-federation/client
+uv run jupyter lab
 ```
 A minimal walkthrough, in case you want to reproduce it cell by cell:
 ```Python

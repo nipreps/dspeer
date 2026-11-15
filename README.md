@@ -103,9 +103,8 @@ INSTITUTION=<institution> cargo run -- peer
 
 # 2. In another terminal, set up and use the Python client
 cd ../client
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-jupyter lab   # open demo.ipynb
+uv sync                 # creates .venv from pyproject.toml / uv.lock
+uv run jupyter lab      # open demo.ipynb
 ```
 
 Drop your own `.parquet` files into `peer-dataset-federation/node/data/`; see

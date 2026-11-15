@@ -32,9 +32,7 @@ The Rust node exposes three HTTP endpoints (`/health`, `/files`, `/fetch`), docu
 
 ## 2. Dependencies
 `requests` is the standard synchronous HTTP library for Python. Chosen over `aiohttp` or `httpx` because the project doesn't need async HTTP calls on the Python side.
-```bash
-pip install requests
-```
+It is declared in `client/pyproject.toml` and installed by `uv sync`.
 
 ## 3. client.py
 ### 3.1 P2PError
@@ -134,21 +132,15 @@ It inspects a `Response` object and converts a non-200 status into a `P2PError` 
 
 ### 3.6 Result
 #### 3.6.1 Install python library
-If you haven't already, install the requests library.
+If you haven't already, set up the client environment.
 ```bash
-# Example of how to create a .venv
-python3 -m venv .venv
-
-source .venv/bin/activate
-
-pip install requests
-# leave
-deactivate
+cd peer-dataset-federation/client
+uv sync
 ```
 
 #### 3.6.2 Manual test
 With the Rust node running (`INSTITUTION=peer1 cargo run -- peer`)   
-`python3 test_client.py`
+`uv run test_client.py`
 ```Python
 # Test client
 from p2p.client import P2PClient
