@@ -23,10 +23,10 @@ The deployment model is one peer per machine: each institution runs a single pee
 |---|---|---|
 | Linux distribution | Target OS for this guide (any recent distro, tested assumptions: Debian/Ubuntu like) | - |
 | Rust | Builds and runs the node | [rustup](https://rust-lang.org/tools/install/) |
-| [uv](https://docs.astral.sh/uv/) | Python dependency and environment management; installs Python 3.14+ for the client if needed | [uv installation](https://docs.astral.sh/uv/getting-started/installation/) |
+| [uv](https://docs.astral.sh/uv/) | Python dependency and environment management | [uv installation](https://docs.astral.sh/uv/getting-started/installation/) |
 | `git` | Cloning the repository | your distro's package manager |
 
-The Rust dependencies (iroh, iroh-blobs, iroh-gossip, Axum, ...) are fetched automatically by `cargo build`, and the Python dependencies by `uv sync` (pinned in `client/uv.lock`).
+The Rust dependencies (iroh, iroh-blobs, iroh-gossip, Axum, ...) are fetched automatically by `cargo build`, and the Python dependencies by `uv sync`.
 
 
 ## 3. Preparing the environment
@@ -129,7 +129,7 @@ cd peer-dataset-federation/client
 uv sync
 ```
 This creates `.venv` with the dependencies declared in `pyproject.toml` (`requests`, `pandas`, `duckdb`, `jupyter`, `jupyterlab`, `pyarrow`), at the versions pinned in `uv.lock`.
-Prefix commands with `uv run` to run them inside that environment; there is no need to activate it.
+Prefix commands with `uv run` to run them inside that environment.There is no need to activate it.
 
 Quick check that the client can reach a running node:
 ```bash
